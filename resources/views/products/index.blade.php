@@ -148,7 +148,7 @@
             });
 
             $(document).on('click', '.delete', function(){
-                if(!confirm('Delete?')) return;
+                if(!confirm('Are you sure you want to Delete?')) return;
                 const id = $(this).data('id');
                 $.ajax({
                     url: API_BASE + '/products/' + id,
@@ -170,7 +170,8 @@
                         $('#description').val(p.description);
                         $('#price').val(p.price);
                         new bootstrap.Modal(document.getElementById('productModal')).show();
-                    }, error: function(){ alert('Error'); }
+                    },
+                    error: function(){ alert('Error'); }
                 });
             });
         });

@@ -34,7 +34,7 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
 
             'role' => 0,
-            'status' => 1
+            'status' => fake()->randomElement([0, 1, 2, 3])
         ];
     }
 

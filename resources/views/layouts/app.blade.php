@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>@yield('title','ProductApp')</title>
+    <title>@yield('title','Product Order App')</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
@@ -20,15 +20,19 @@
         <a class="navbar-brand" href="{{ route('dashboard') }}">Product Order App</a>
         <div>
             @auth
-                <a href="{{ route('products.index') }}" class="btn btn-sm btn-outline-light me-2">Products</a>
+                <a href="{{ route('products.index') }}" class="link-opacity-100 text-light me-2">Products</a>
 
                 @if(auth()->user()->isAdmin())
-                    <a href="{{ route('users.index') }}" class="btn btn-sm btn-outline-light me-2">Users</a>
+                    <a href="{{ route('users.index') }}" class="link-opacity-100 text-light me-2">Users</a>
+                @endif
+
+                @if(auth()->user())
+                    <span class="text-light me-2">{{ auth()->user()->name }}</span>
                 @endif
 
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-inline">
                     @csrf
-                    <button type="button" class="btn btn-outline-light btn-sm" onclick="confirmLogout()">Logout</button>
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="confirmLogout()">Logout</button>
                 </form>
             @endauth
         </div>
@@ -41,7 +45,6 @@
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.2/dist/bootstrap-table.min.js"></script>

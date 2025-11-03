@@ -10,6 +10,11 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
+        $user = $request->user();
+        if (!$user->isAdmin()) {
+            return response()->json(['message'=>'Unauthorized'], 403);
+        }
+
         $limit = request('limit', 10);
         $offset = request('offset',0);
 
@@ -41,15 +46,64 @@ class UserController extends Controller
         return response()->json($data);
     }
 
-    public function destroy(Request $request, User $myUser)
+    public function show(Request $request, $id)
     {
-        $user = $request->user();
-        if (!$user->isAdmin()) {
-            return response()->json(['message'=>'Forbidden'], 403);
+        $authUser  = $request->user();
+        if (!$authUser->isAdmin()) {
+            return response()->json(['message'=>'Unauthorized'], 403);
+        }
+        $user = User::findOrFail($id);
+
+        return response()->json($user);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $authUser  = $request->user();
+        if (!$authUser->isAdmin()) {
+            return response()->json(['message'=>'Unauthorized'], 403);
         }
 
-        $myUser->delete();
-        return response()->json(['message'=>'Deleted']);
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'status' => 'required|in:0,1,2,3',
+        ]);
+
+        $user = User::findOrFail($id);
+        $user->update($request->only(['name', 'email', 'status']));
+
+        return response()->json(['message' => 'User updated successfully', 'user' => $user]);
+    }
+
+    public function changeStatus(Request $request, $id)
+    {
+        $authUser  = $request->user();
+        if (!$authUser->isAdmin()) {
+            return response()->json(['message'=>'Unauthorized'], 403);
+        }
+
+        $request->validate([
+            'status' => 'required|in:0,1,2,3',
+        ]);
+
+        $user = User::findOrFail($id);
+        $user->update(['status' => $request->status]);
+
+        return response()->json(['message' => 'User status updated successfully']);
+    }
+
+    public function destroy(Request $request, $id)
+    {
+        $authUser  = $request->user();
+        if (!$authUser->isAdmin()) {
+            return response()->json(['message'=>'Unauthorized'], 403);
+        }
+
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return response()->json(['message' => 'User deleted successfully']);
     }
 
 }
