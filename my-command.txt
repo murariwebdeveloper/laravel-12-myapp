@@ -1,0 +1,164 @@
+
+// crud
+https://www.itsolutionstuff.com/post/laravel-12-crud-application-example-tutorialexample.html
+
+// crud ajax
+https://www.itsolutionstuff.com/post/laravel-12-ajax-crud-operation-tutorialexample.html
+
+// Custom User Login and Registration Tutorial
+https://www.itsolutionstuff.com/post/laravel-12-custom-user-login-and-registration-tutorialexample.html
+
+=> table :- users
+    -> name
+    -> email
+    -> password
+    -> role (0 => User, 1 => Admin)
+    -> status (0 => Register, 1 => Active, 2 => Inactive)
+
+=> Table :- Products
+    -> user_id
+    -> name
+    -> description
+    -> image
+    -> price
+
+create this table migration in laravel and also create seeder for 200 product and 50 user and create default admin seeder admin email is admin@gmail.com and password is 12345678.
+create blade layout for this app.
+Create login for admin and simple user and register for simple user, product crud and on product listing user wise when user is admin then fetch all product and when user is simple then user fetch self product.
+using laravel for api with proper form vailidation, santum for create user token, jquery ajax for call api, Bootstrap-5 cdn, bootstrap table plugin for product and user data listing in table.
+
+For create app
+
+=>  composer create-project laravel/laravel laravel-12-myapp
+
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+php artisan view:clear
+
+php artisan optimize:clear
+
+php artisan optimize
+
+php artisan serve
+
+
+
+=> Before migration add in service provider
+
+Step 1: Open App\Providers\AppServiceProvider.php
+Edit this file:
+app/Providers/AppServiceProvider.php
+
+Add this import and a boot() method:
+
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Schema; // <-- add this line
+
+class AppServiceProvider extends ServiceProvider
+{
+    /**
+     * Bootstrap any application services.
+     */
+    public function boot(): void
+    {
+        Schema::defaultStringLength(191); // <-- add this line
+    }
+}
+
+
+php artisan cache:table
+php artisan migrate
+php artisan cache:clear
+
+
+
+php artisan install:api
+
+
+The php artisan install:api command in Laravel is used to set up the necessary scaffolding for building APIs in your application. This command performs several key actions:
+Installs Laravel Sanctum: It installs the laravel/sanctum package, which provides a simple and robust API token authentication system. Sanctum is ideal for authenticating SPAs, mobile applications, or simple token-based API consumers.
+Creates routes/api.php: It creates the api.php file within your routes directory, where you can define all of your API-specific routes. In recent Laravel versions (like Laravel 11 and 12), this file is not included by default, so this command is crucial for enabling API routing.
+Updates bootstrap/app.php: It modifies the bootstrap/app.php file to include the necessary configuration for API routing, ensuring that your api.php routes are properly registered and handled by the application.
+Prompts for Migrations: After installing Sanctum, you will typically be prompted to run pending database migrations, which are required for Sanctum to create the personal_access_tokens table in your database. This table stores the API tokens used for authentication.
+In essence, running php artisan install:api prepares your Laravel application for API development by setting up authentication and routing infrastructure.
+Optional Flags:
+--passport: If you prefer to use Laravel Passport for OAuth2 authentication instead of Sanctum, you can include this flag when running the command. This will install Passport instead of Sanctum.
+--force: This flag can be used to overwrite any existing api.php file if it already exists.
+--without-migration-prompt: This flag suppresses the prompt to run pending migrations, allowing you to run them manually later if desired.
+
+
+STEP 0 — Create new Laravel project (if you don’t already have one)
+
+=>  composer create-project laravel/laravel laravel-12-myapp
+
+# create project (example name: laravel-myapp)
+=> composer create-project laravel/laravel laravel-12-myapp
+=> cd laravel-12-myapp
+
+STEP 1 — Install Sanctum
+
+php artisan install:api
+
+=> composer require laravel/sanctum // this is not mandatory after php artisan install:api in laravel-12
+=> php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider" // this is not mandatory after php artisan install:api in laravel-12
+
+Edit .env (set stateful domains if needed):
+
+SESSION_DRIVER=cookie
+SANCTUM_STATEFUL_DOMAINS=localhost,127.0.0.1
+
+use Illuminate\Support\Facades\Schema; // <-- add this line
+Schema::defaultStringLength(191); // <-- add this line
+
+Run migrations after we create migration files below.
+
+
+STEP 2 — Create files (artisan make commands)
+
+Run these to scaffold controllers, middleware, requests, factories, seeders and models (some of these will be overwritten by the code blocks below — running make helps file locations and namespaces):
+
+# Models + factories created automatically by make:model command
+php artisan make:model Product -m -f
+php artisan make:model User -f      // this is not mandatory first check model and factory
+
+# Controllers (API and Web)
+php artisan make:controller Api/AuthController
+php artisan make:controller Api/ProductController
+php artisan make:controller Api/UserController
+php artisan make:controller Web/AuthController
+php artisan make:controller Web/ProductController
+php artisan make:controller Web/UserController
+
+# Middleware for admin
+php artisan make:middleware AdminMiddleware
+
+# Form Requests
+php artisan make:request RegisterRequest
+php artisan make:request LoginRequest
+php artisan make:request StoreProductRequest
+php artisan make:request UpdateProductRequest
+
+# Seeders
+php artisan make:seeder UserSeeder
+php artisan make:seeder ProductSeeder
+php artisan make:seeder DatabaseSeeder // this is not mandatory first check seeder
+
+
+php artisan storage:link
+
+php artisan migrate
+php artisan db:seed
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,353 @@
+
+// crud
+https://www.itsolutionstuff.com/post/laravel-12-crud-application-example-tutorialexample.html
+
+// crud ajax
+https://www.itsolutionstuff.com/post/laravel-12-ajax-crud-operation-tutorialexample.html
+
+// Custom User Login and Registration Tutorial
+https://www.itsolutionstuff.com/post/laravel-12-custom-user-login-and-registration-tutorialexample.html
+
+
+=> table :- users
+    -> name
+    -> email
+    -> password
+    -> role (0 => User, 1 => Admin)
+    -> status (0 => Register, 1 => Active, 2 => Inactive)
+
+=> Table :- Products
+    -> user_id
+    -> name
+    -> description
+    -> image
+    -> price
+
+create this table migration in laravel and also create seeder for 200 product and 50 user and create default admin seeder admin email is admin@gmail.com and password is 12345678.
+create blade layout for this app.
+Create login for admin and simple user and register for simple user, product crud and on product listing user wise when user is admin then fetch all product and when user is simple then user fetch self product.
+using laravel for api with proper form vailidation, santum for create user token, jquery ajax for call api, Bootstrap-5 cdn, bootstrap table plugin for product and user data listing in table.
+
+
+
+php artisan config:clear
+
+Step 1: Open App\Providers\AppServiceProvider.php
+Edit this file:
+app/Providers/AppServiceProvider.php
+
+Add this import and a boot() method:
+
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Schema; // <-- add this line
+
+class AppServiceProvider extends ServiceProvider
+{
+    /**
+     * Bootstrap any application services.
+     */
+    public function boot(): void
+    {
+        Schema::defaultStringLength(191); // <-- add this line
+    }
+}
+
+
+
+Registering the Middleware:
+Open the bootstrap/app.php file and locate the withMiddleware method. Inside this method, you can register your middleware in various ways:
+As an Alias (for route-specific application):
+
+use App\Http\Middleware\MyCustomMiddleware; // Import your middleware class
+
+return Application::configure(basePath: dirname(__DIR__))
+    // ... other configurations
+    ->withMiddleware(function (Middleware $middleware) {
+        $middleware->alias([
+            'custom' => MyCustomMiddleware::class, // 'custom' is your alias
+
+            'admin' => \App\Http\Middleware\AdminMiddleware::class,
+        ]);
+    })
+    // ... other configurations
+    ->create();
+
+
+
+
+
+php artisan install:api
+
+
+The php artisan install:api command in Laravel is used to set up the necessary scaffolding for building APIs in your application. This command performs several key actions:
+Installs Laravel Sanctum: It installs the laravel/sanctum package, which provides a simple and robust API token authentication system. Sanctum is ideal for authenticating SPAs, mobile applications, or simple token-based API consumers.
+Creates routes/api.php: It creates the api.php file within your routes directory, where you can define all of your API-specific routes. In recent Laravel versions (like Laravel 11 and 12), this file is not included by default, so this command is crucial for enabling API routing.
+Updates bootstrap/app.php: It modifies the bootstrap/app.php file to include the necessary configuration for API routing, ensuring that your api.php routes are properly registered and handled by the application.
+Prompts for Migrations: After installing Sanctum, you will typically be prompted to run pending database migrations, which are required for Sanctum to create the personal_access_tokens table in your database. This table stores the API tokens used for authentication.
+In essence, running php artisan install:api prepares your Laravel application for API development by setting up authentication and routing infrastructure.
+Optional Flags:
+--passport: If you prefer to use Laravel Passport for OAuth2 authentication instead of Sanctum, you can include this flag when running the command. This will install Passport instead of Sanctum.
+--force: This flag can be used to overwrite any existing api.php file if it already exists.
+--without-migration-prompt: This flag suppresses the prompt to run pending migrations, allowing you to run them manually later if desired.
+
+
+
+
+
+STEP 0 — Create new Laravel project (if you don’t already have one)
+
+=>  composer create-project laravel/laravel myapp
+
+# create project (example name: laravel-myapp)
+=> composer create-project laravel/laravel laravel-myapp
+=> cd laravel-myapp
+
+
+STEP 1 — Install Sanctum
+=> composer require laravel/sanctum
+=> php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
+
+Edit .env (set stateful domains if needed):
+
+SESSION_DRIVER=cookie
+SANCTUM_STATEFUL_DOMAINS=localhost,127.0.0.1
+
+
+Run migrations after we create migration files below.
+
+STEP 2 — Create files (artisan make commands)
+
+Run these to scaffold controllers, middleware, requests, factories, seeders and models (some of these will be overwritten by the code blocks below — running make helps file locations and namespaces):
+
+# Models + factories created automatically by make:model command
+php artisan make:model Product -m -f
+php artisan make:model User -f
+
+# Controllers (API and Web)
+php artisan make:controller Api/AuthController
+php artisan make:controller Api/ProductController
+php artisan make:controller Api/UserController
+php artisan make:controller Web/AuthController
+php artisan make:controller Web/ProductController
+php artisan make:controller Web/UserController
+
+# Middleware for admin
+php artisan make:middleware AdminMiddleware
+
+# Form Requests
+php artisan make:request RegisterRequest
+php artisan make:request LoginRequest
+php artisan make:request StoreProductRequest
+php artisan make:request UpdateProductRequest
+
+# Seeders
+php artisan make:seeder UserSeeder
+php artisan make:seeder ProductSeeder
+php artisan make:seeder DatabaseSeeder
+
+
+
+
+'api' => [
+    \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+    'throttle:api',
+    \Illuminate\Routing\Middleware\SubstituteBindings::class,
+],
+
+
+
+FILESYSTEM_DRIVER=public
+
+php artisan storage:link
+
+php artisan migrate
+php artisan db:seed
+
+
+php artisan serve
+# open http://127.0.0.1:8000
+
+
+Login via web:
+
+Email: admin@gmail.com
+
+Password: 12345678
+
+
+# create project
+composer create-project laravel/laravel productapp
+cd productapp
+
+# install sanctum
+composer require laravel/sanctum
+php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
+
+# create storage link
+php artisan storage:link
+
+# generate scaffolding (optional)
+php artisan make:model Product -m -f
+php artisan make:controller Api/AuthController
+# ... other make: commands from STEP 2
+
+# migrate & seed
+php artisan migrate:fresh --seed
+
+# run
+php artisan serve
+
+
+# optimize
+php artisan optimize
+
+
+
+
+---------------------------------------------
+
+composer require laravel/sanctum
+
+
+php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
+
+
+
+
+-----------------------------------------------
+
+
+Step 3. (Optional) If you want to use Policies
+
+Step 3.1 Create a policy
+
+php artisan make:policy ProductPolicy --model=Product
+
+
+app/Policies/ProductPolicy.php
+
+
+Step 3.2 Edit the policy
+
+Open it and define who can do what:
+
+<?php
+
+namespace App\Policies;
+
+use App\Models\Product;
+use App\Models\User;
+
+class ProductPolicy
+{
+    public function viewAny(User $user)
+    {
+        return true;
+    }
+
+    public function view(User $user, Product $product)
+    {
+        return $user->role == 1 || $user->id === $product->user_id;
+    }
+
+    public function create(User $user)
+    {
+        return $user->status == 1; // only active users
+    }
+
+    public function update(User $user, Product $product)
+    {
+        return $user->role == 1 || $user->id === $product->user_id;
+    }
+
+    public function delete(User $user, Product $product)
+    {
+        return $user->role == 1 || $user->id === $product->user_id;
+    }
+}
+
+
+Step 3.3 Register the policy
+
+In app/Providers/AuthServiceProvider.php
+
+protected $policies = [
+    \App\Models\Product::class => \App\Policies\ProductPolicy::class,
+];
+
+
+Then run:
+
+php artisan optimize:clear
+
+
+Step 3.4 Use it safely in controller
+
+Now you can use Laravel’s authorize() again safely:
+
+public function update(Request $request, Product $product)
+{
+    $this->authorize('update', $product);
+    ...
+}
+
+
+This will only allow Admins or product owners.
+
+
+
+
+
+
+In Laravel 12, the way middleware is registered and configured has changed significantly compared to previous versions. The app/Http/Kernel.php file, where $middlewareGroups were defined, is no longer present in new Laravel 12 applications. Instead, middleware is configured within the bootstrap/app.php file.
+To achieve the equivalent of defining the api middleware group as shown in your example, you will modify the withMiddleware callback within bootstrap/app.php.
+Here's how to add the api middleware group in Laravel 12:
+Locate bootstrap/app.php: Open the bootstrap/app.php file in your Laravel 12 project.
+Modify withMiddleware: Within the bootstrap/app.php file, find the withMiddleware method call and add the api middleware group configuration inside it.
+
+
+
+
+    <?php
+
+    use Illuminate\Foundation\Application;
+    use Illuminate\Foundation\Configuration\Exceptions;
+    use Illuminate\Foundation\Configuration\Middleware;
+
+    return Application::configure(basePath: dirname(__DIR__))
+        ->withRouting(
+            web: __DIR__.'/../routes/web.php',
+            api: __DIR__.'/../routes/api.php',
+            commands: __DIR__.'/../routes/console.php',
+            health: '/up',
+        )
+        ->withMiddleware(function (Middleware $middleware) {
+            $middleware->api(prepend: [
+                \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+            ]);
+
+            $middleware->alias([
+                'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+                // ... other aliases
+            ]);
+
+            // You can also add global middleware here if needed
+            // $middleware->web(append: [
+            //     // ...
+            // ]);
+        })
+        ->withExceptions(function (Exceptions $exceptions) {
+            //
+        })->create();
+
+
+
+
+
+
+
+
