@@ -2,7 +2,14 @@
 @section('title','Users')
 @section('content')
     <h3>Users</h3>
-    <table id="user-table" class="table" data-toggle="table" data-pagination="true" data-search="true">
+    <table id="user-table" class="table table-sm" data-toggle="table"
+           data-pagination="true"
+           data-pagination-v-align="both"
+
+           data-search="true"
+           data-search-align="left"
+           data-buttons-prefix="btn-sm btn"
+           data-show-columns-search="true">
         <thead>
         <tr>
             <th data-field="id" data-sortable="true" data-align="center">ID</th>
@@ -116,6 +123,11 @@
                 pageSize: "10",
                 showFooter: false,
                 sidePagination: "server",
+
+                onPostBody() {
+                    $('.pagination').addClass('pagination-sm');
+                    $('.search-input').addClass('form-control-sm');
+                }
             });
         }
 

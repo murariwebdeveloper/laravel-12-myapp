@@ -7,7 +7,23 @@
     </div>
 
     {{--data-width="5"--}}
-    <table id="product-table" class="table" data-toggle="table" data-pagination="true" data-search="true">
+    <table id="product-table" class="table table-sm"
+           data-toggle="table"
+           data-pagination="true"
+           data-pagination-v-align="bottom"
+           data-pagination-class="pagination-sm"
+
+           data-height="400"
+
+           data-search="true"
+           data-search-class="form-control-sm"
+
+           data-search-align="left"
+           data-buttons-align="right"
+           data-buttons="buttons"
+           data-buttons-prefix="btn-sm btn"
+
+           data-show-columns-search="true">
         <thead>
         <tr>
             <th data-field="id" data-sortable="true" data-visible="true" data-align="center">ID</th>
@@ -15,7 +31,8 @@
             <th data-field="description" data-sortable="true" data-visible="false" data-align="left">Description</th>
             <th data-field="price" data-sortable="true" data-visible="true" data-align="right"> Price</th>
             <th data-field="user_name" data-sortable="true" data-visible="true" data-align="left">Owner</th>
-            <th data-field="actions" data-sortable="true" data-visible="true" data-align="center" data-formatter="rowActions">Actions</th>
+            <th data-field="actions" data-sortable="true" data-visible="true" data-align="center"
+                data-formatter="rowActions">Actions</th>
         </tr>
         </thead>
     </table>
@@ -108,6 +125,12 @@
                 pageSize: "10",
                 showFooter: false,
                 sidePagination: "server",
+
+                onPostBody() {
+                    $('.pagination').addClass('pagination-sm');
+                    $('.search-input').addClass('form-control-sm');
+                }
+
             });
         }
 
@@ -116,6 +139,40 @@
           <button class="btn btn-sm btn-danger delete" data-id="${row.id}"><i class="fa fa-trash-o"></i></button>`;
         }
         window.rowActions = rowActions;
+
+
+        window.buttons = () => ({
+
+            @if(auth()->user()->isAdmin())
+            btnUsersAdd: {
+                text: 'Highlight Users',
+                icon: 'bi-person',
+                event () {
+                    // alert('Do some stuff to e.g. search all users which has logged in the last week')
+
+                    window.location.href = "{{ route('users.index') }}";
+                },
+                attributes: {
+                    title: 'Search all users which has logged in the last week',
+                    class: 'btn-danger'
+                }
+            },
+            @endif
+            btnAdd: {
+                text: 'Add new row',
+                icon: 'bi-plus-lg',
+                event () {
+                    // alert('Do some stuff to e.g. add a new row')
+                    $('#product_id').val('');
+                    $('#productForm')[0].reset();
+                    new bootstrap.Modal(document.getElementById('productModal')).show();
+                },
+                attributes: {
+                    title: 'Add a new row to the table',
+                    class: 'btn-success'
+                }
+            }
+        });
 
         $(document).ready(function(){
             loadData();
